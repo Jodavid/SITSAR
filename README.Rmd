@@ -29,7 +29,7 @@ Last update: `r format(Sys.Date(),"%d-%m-%Y")`
 ```{r, echo=TRUE, eval=FALSE}
 # Installation
 install.packages("devtools")
-devtools::install_github("XXX/SITSAR")
+devtools::install_github("jodavid/SITSAR")
 ```
 
 ```{r, echo=TRUE, eval=FALSE}

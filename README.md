@@ -18,7 +18,7 @@ Last update: 20-05-2023
 ``` r
 # Installation
 install.packages("devtools")
-devtools::install_github("XXX/SITSAR")
+devtools::install_github("jodavid/SITSAR")
 ```
 
 ``` r
@@ -28,7 +28,7 @@ install.packages("SITSAR_0.0.0.9000.tar.gz", repos = NULL, type = "source")
 ### Use
 
 ``` r
-# package import
+# import package
 library(SITSAR)
 ```
 
