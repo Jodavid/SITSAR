@@ -5,7 +5,7 @@
 #'
 #' @param par_1 parameters vector for sample 1
 #' @param par_2 parameters vector for sample 2
-#' @param p     parameter for XXXX
+#' @param p     distance Renyi parameter
 #' @param type type of distance for calculate
 #'
 #' @return Distance value between samples.
@@ -22,6 +22,7 @@
 #' alpha <- -1.5
 #' gama <- 2
 #' L <- 8
+#'
 #'
 #' distancesg0i(c(alpha,gama,L),c(alpha,gama,L))
 #' res <- distancesg0i(c(alpha,gama,L),c(alpha,gama,4))

@@ -1,13 +1,11 @@
-#' Parameter estimators for G0I
+#' G0I Estimation
 #'
-#' \code{estimatorg0i} Parameter estimators for G0I
+#' \code{g0iestimation} Estimation of G0I distribution parameters
 #'
 #'
-#' @param initial vector of initial values.
-#' @param Xobs vector of sample for parameters estimators
-#' @param method obtained of \code{maxLik}, maximization method, currently either "NR" (for Newton-Raphson), "BFGS" (for Broyden-Fletcher-Goldfarb-Shanno), "BFGSR" (for the BFGS algorithm implemented in R), "BHHH" (for Berndt-Hall-Hall-Hausman), "SANN" (for Simulated ANNealing), "CG" (for Conjugate Gradients), or "NM" (for Nelder-Mead). Lower-case letters (such as "nr" for Newton-Raphson) are allowed. The default method is "NR" for unconstrained problems, and "NM" or "BFGS" for constrained problems, depending on if the grad argument was provided. "BHHH" is a good alternative given the likelihood is returned observation-wise (see maxBHHH).
-#'
-#' @return \code{dg0i} gives the density, and \code{rg0i} generates random deviates.
+#' @param Theta vector of random initial values considering the assumptions of the parameters, \eqn{alpha < 0}, \eqn{gamma > 0 } and \eqn{L > 0}.
+#' @param x vector of observations.
+#' @param L_fixed logical; if TRUE, the parameter \eqn{L} is fixed. \eqn{L} is not fixed by default, \eqn{L = FALSE}.
 #'
 #' @references
 #' \itemize{
@@ -21,36 +19,43 @@
 #' alpha <- -1.5
 #' gama <- 2
 #' L <- 8
-#' Xobs2<- rg0i(100,alpha,gama,L)
-#' estimatorg0i(c(alpha,gama,L), Xobs2)
-#' estimatorg0i(c(-1.1,1,1),Xobs2)
 #'
-#' @importFrom maxLik maxLik
+#' y <- rg0i(1000, alpha, gama, L)
+#'
+#' # Estimation with all parameters
+#' g0iestimation(c(-1, 1, 1), y)
+#'
+#' # Estimation with fixed L
+#' g0iestimation(c(-1, 1, 1), y, L_fixed = TRUE)
+#'
+#' @importFrom stats integrate
+#' @importFrom fitdistrplus fitdist
 #'
 #' @export
-estimatorg0i = function(initial, Xobs, method ="NM"){
+g0iestimation <- function(Theta,x, L_fixed = FALSE) {
 
-  A <- rbind(
-    c(-1, 0, 0),
-    c(0, 1, 0),
-    c(0, 0, 1))
-  B <- c(0, 0, 0)
+  if ( L_fixed == TRUE){
+    fit.params <- suppressWarnings(
+      fitdistrplus::fitdist(x, "g0i",
+                            start = list(alpha = Theta[1], gamma = Theta[2]),
+                            lower = c(-Inf, 1e-5),upper = c(-1e-1, Inf),
+                            fix.arg = list(L =  Theta[3]),
+                            method = "mle"
+      )
+    )
 
-  rr = maxLik::maxLik(loglikeg0i,
-              start=initial,
-              Xobs = Xobs,
-              constraints=list(ineqA=A, ineqB=B),
-              method = method);
+    res <- c(fit.params$estimate,Theta[3])
 
-  estimate <- stats::coef(rr)
-  return(estimate)
+    return(res)
 
-}
-
-
-
-loglikeg0i = function(theta, Xobs){
-  # ..> GI0 log-likelihood
-  res <- mean(log(dg0i(Xobs,theta[1],theta[2],theta[3])),na.rm=T)
-  return(res)
+  }else{
+    fit.params <- suppressWarnings(
+      fitdistrplus::fitdist(x, "g0i",
+                            start = list(alpha = Theta[1], gamma = Theta[2], L = Theta[3]),
+                            lower = c(-Inf, 1e-5, .1),upper = c(-1e-1, Inf, 30),
+                            method = "mle"
+      )
+    )
+    return(fit.params$estimate)
+  }
 }

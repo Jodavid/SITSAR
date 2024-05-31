@@ -13,7 +13,7 @@ distancesg0itable(image, marks1, marks2, p = 1/2)
 
 \item{marks2}{vector 2 of marks with the follow order c(left, right, up, down)}
 
-\item{p}{parameter for XXXX}
+\item{p}{distance Renyi parameter}
 }
 \value{
 Distances table between samples obtained of marks.

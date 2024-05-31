@@ -11,7 +11,7 @@ distancesg0i(par_1, par_2, p = 1/2, type = "KL")
 
 \item{par_2}{parameters vector for sample 2}
 
-\item{p}{parameter for XXXX}
+\item{p}{distance Renyi parameter}
 
 \item{type}{type of distance for calculate}
 }
@@ -28,6 +28,7 @@ set.seed(1) # determining a seed
 alpha <- -1.5
 gama <- 2
 L <- 8
+
 
 distancesg0i(c(alpha,gama,L),c(alpha,gama,L))
 res <- distancesg0i(c(alpha,gama,L),c(alpha,gama,4))
