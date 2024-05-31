@@ -37,9 +37,8 @@ library(SITSAR)
 set.seed(1) # determining a seed
 alpha <- -1.5
 gama <- 2
-L <- 8
+L <- 3
 Xobs<- rg0i(100,alpha, gama, L)
-Xobs
 ```
 
 ``` r
@@ -54,14 +53,25 @@ library(SITSAR)
 set.seed(1) # seed fixed
 alpha <- -1.5
 gama <- 2
-L <- 8
+L <- 1
 Xobs2<- rg0i(100,alpha,gama,L)
 
 # The parameter L is estimated.
 g0iestimation(c(alpha,gama,L), Xobs2)
 
 # The parameter L is fixed.
-g0iestimation(c(-1.1,1,8),Xobs2, L_fixed = TRUE)
+g0iestimation(c(-1.1,1,1),Xobs2, L_fixed = TRUE)
+
+
+
+L <- 3
+Xobs2<- rg0i(100,alpha,gama,L)
+
+# The parameter L is estimated.
+g0iestimation(c(alpha,gama,L), Xobs2)
+
+# The parameter L is fixed.
+g0iestimation(c(-1.1,1,3),Xobs2, L_fixed = TRUE)
 ```
 
 ``` r
@@ -69,7 +79,7 @@ g0iestimation(c(-1.1,1,8),Xobs2, L_fixed = TRUE)
 set.seed(1) # seed fixed
 alpha <- -1.5
 gama <- 2
-L <- 8
+L <- 4
 
 distancesg0i(c(alpha,gama,L),c(alpha,gama,L))
 res <- distancesg0i(c(alpha,gama,L),c(alpha,gama,4))
