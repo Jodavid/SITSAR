@@ -36,11 +36,19 @@ g0iestimation <- function(Theta,x, L_fixed = FALSE) {
 
   if ( L_fixed == TRUE){
     fit.params <- suppressWarnings(
-      fitdistrplus::fitdist(x, "g0i",
+      # fitdistrplus::fitdist(x, "g0i",
+      #                       start = list(alpha = Theta[1], gamma = Theta[2]),
+      #                       lower = c(-Inf, 1e-5),upper = c(-1e-1, Inf),
+      #                       fix.arg = list(L =  Theta[3]),
+      #                       method = "mle"
+      # )
+      fitdistrplus::mledist(x, "g0i",
                             start = list(alpha = Theta[1], gamma = Theta[2]),
-                            lower = c(-Inf, 1e-5),upper = c(-1e-1, Inf),
+                            optim.method = "default",
                             fix.arg = list(L =  Theta[3]),
-                            method = "mle"
+                            gradient = grad_g0i_Lfixed,
+                            lower = c(-Inf, 1e-5, .1),
+                            upper = c(-1e-1, Inf, Inf)
       )
     )
 
@@ -50,12 +58,69 @@ g0iestimation <- function(Theta,x, L_fixed = FALSE) {
 
   }else{
     fit.params <- suppressWarnings(
-      fitdistrplus::fitdist(x, "g0i",
+      # fitdistrplus::fitdist(x, "g0i",
+      #                       start = list(alpha = Theta[1], gamma = Theta[2], L = Theta[3]),
+      #                       lower = c(-Inf, 1e-5, .1),upper = c(-1e-1, Inf, 30),
+      #                       method = "mle"
+      # )
+      fitdistrplus::mledist(x, "g0i",
                             start = list(alpha = Theta[1], gamma = Theta[2], L = Theta[3]),
-                            lower = c(-Inf, 1e-5, .1),upper = c(-1e-1, Inf, 30),
-                            method = "mle"
+                            gradient = grad_g0i,
+                            lower = c(-Inf, 1e-5, .1),
+                            upper = c(-1e-1, Inf, 35),
+                            optim.method = "default",
       )
     )
     return(fit.params$estimate)
   }
 }
+
+#' A function to return the gradient of the log-likelihood for the "BFGS"
+#' @noRd
+grad_g0i <-  function(par, fix.arg, obs, ddistnam){
+
+  alpha = par[1]
+  gama = par[2]
+  L = par[3]
+
+  n <- length(obs);
+
+  res1 <- -n * log(gama)  - n * digamma(L - alpha) +
+          n * digamma(-alpha) + sum( log(gama + L*obs) )
+
+  res2 <- -n * alpha / gama + (alpha - L) * sum( 1 / (gama + L * obs) )
+
+  res3 <- n * (1 + log(L)) + n * digamma(L - alpha) - n * digamma(L) +
+          sum(log(obs)) - sum(log(gama + L * obs)) +
+          (alpha - L) * sum(obs/(gama + L*obs))
+
+  res <- c(res1, res2, res3)
+
+  return(res)
+
+}
+
+
+#' A function to return the gradient of the log-likelihood for the "BFGS"
+#' L fixed
+#' @noRd
+grad_g0i_Lfixed <-  function(par, fix.arg, obs, ddistnam){
+
+  alpha = par[1]
+  gama = par[2]
+
+  # Defina L
+  L = fix.arg$L
+
+  n <- length(obs);
+
+  res1 <- -n * log(gama)  - n * digamma(L-alpha) + n * digamma(-alpha) +
+    sum( log(gama + L*obs) )
+  res2 <- -n * alpha / gama + (alpha-L) * sum( 1 / (gama + L * obs) )
+
+  res <- c(res1, res2)
+
+  return(res)
+
+}
+

@@ -9,7 +9,7 @@ version](https://www.r-pkg.org/badges/version/SITSAR)](https://cran.r-project.or
 Download](https://cranlogs.r-pkg.org/badges/grand-total/SITSAR)](https://cran.r-project.org/package=SITSAR)
 <!-- badges: end -->
 
-Last update: 31-05-2024
+Last update: 01-06-2024
 
 ## Information Theory, Geometry and Statistics for Synthetic Aperture Radar (SAR) Data
 
@@ -52,9 +52,9 @@ library(SITSAR)
 
 set.seed(1) # seed fixed
 alpha <- -1.5
-gama <- 2
+gama <- .4
 L <- 1
-Xobs2<- rg0i(100,alpha,gama,L)
+Xobs2 <- rg0i(1000,alpha,gama,L)
 
 # The parameter L is estimated.
 g0iestimation(c(alpha,gama,L), Xobs2)
@@ -65,7 +65,7 @@ g0iestimation(c(-1.1,1,1),Xobs2, L_fixed = TRUE)
 
 
 L <- 3
-Xobs2<- rg0i(100,alpha,gama,L)
+Xobs2 <- rg0i(1000,alpha,gama,L)
 
 # The parameter L is estimated.
 g0iestimation(c(alpha,gama,L), Xobs2)
@@ -93,10 +93,12 @@ library(SITSAR)
 set.seed(1) # determining a seed
 data("SanFrancisco150")
 image <- SanFrancisco150
-# left,right, up,down)
+
+# left, right, up, down
 marks1 <- c(10,30,50,100)
 marks2 <- c(20,50,80,130)
 
-teste <- distancesg0itable(image,marks1, marks2, p = 1/2)
-teste
+resul <- distancesg0itable(image,marks1, marks2, p = 1/2)
+
+print(resul)
 ```
