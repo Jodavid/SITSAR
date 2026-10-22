@@ -3,6 +3,10 @@
 \name{EntropySegmenter}
 \alias{EntropySegmenter}
 \title{Entropy-based segmentation by (stochastic) EM (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{EntropySegmenter$new()} returns a new \code{EntropySegmenter}
+object; its methods are described in the Methods section below.
+}
 \description{
 Unsupervised segmentation of SAR/PolSAR images from maps of estimated
 Shannon entropies (Ferreira and Nascimento, 2020; Nascimento, Ferreira and

@@ -3,6 +3,10 @@
 \name{GGammaSAR}
 \alias{GGammaSAR}
 \title{Generalized Gamma model for SAR intensities (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{GGammaSAR$new()} returns a new \code{GGammaSAR}
+object; its methods are described in the Methods section below.
+}
 \description{
 R6 class for the generalized Gamma law (see \code{\link[=dggamma]{dggamma()}}). Estimation is
 carried out by profiling: for a given power \eqn{\alpha}, the maximum

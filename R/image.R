@@ -35,6 +35,8 @@
 #' img$plot()
 #' }
 #'
+#' @return An [R6::R6Class] generator. `SARImage$new()` returns a new `SARImage`
+#'   object; its methods are described in the Methods section below.
 #' @export
 SARImage <- R6::R6Class(
   "SARImage",

@@ -3,6 +3,10 @@
 \name{WishartSAR}
 \alias{WishartSAR}
 \title{Scaled complex Wishart model for PolSAR data (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{WishartSAR$new()} returns a new \code{WishartSAR}
+object; its methods are described in the Methods section below.
+}
 \description{
 R6 class for the scaled complex Wishart law \eqn{\mathcal{W}_m(\Sigma, L)}
 (see \code{\link[=dwishart_sar]{dwishart_sar()}}). The maximum likelihood estimator of \eqn{\Sigma}

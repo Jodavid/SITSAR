@@ -3,6 +3,10 @@
 \name{SARModel}
 \alias{SARModel}
 \title{Base R6 class for SAR and PolSAR statistical models}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{SARModel$new()} returns a new \code{SARModel}
+object; its methods are described in the Methods section below.
+}
 \description{
 \code{SARModel} is the abstract parent of all model classes of \code{SITSAR}
 (\link{GammaSAR}, \link{G0I}, \link{GGammaSAR}, \link{WishartSAR}, \link{G0Polarimetric} and

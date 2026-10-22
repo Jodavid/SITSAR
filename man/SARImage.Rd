@@ -3,6 +3,10 @@
 \name{SARImage}
 \alias{SARImage}
 \title{SAR and PolSAR images (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{SARImage$new()} returns a new \code{SARImage}
+object; its methods are described in the Methods section below.
+}
 \description{
 \code{SARImage} stores a SAR image as an array of dimension
 \verb{nrow x ncol x layers}. Two types are supported:

@@ -3,6 +3,10 @@
 \name{G0Polarimetric}
 \alias{G0Polarimetric}
 \title{G0 polarimetric model for PolSAR data (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{G0Polarimetric$new()} returns a new \code{G0Polarimetric}
+object; its methods are described in the Methods section below.
+}
 \description{
 R6 class for the \eqn{\mathcal{G}^0_m(\alpha, \Sigma, L)} law (see
 \code{\link[=dg0p]{dg0p()}}). Following Nascimento, Ferreira and Frery (2023),

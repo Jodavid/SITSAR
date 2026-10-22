@@ -3,6 +3,10 @@
 \name{DivergenceClassifier}
 \alias{DivergenceClassifier}
 \title{Divergence-based classifier for SAR/PolSAR features (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{DivergenceClassifier$new()} returns a new \code{DivergenceClassifier}
+object; its methods are described in the Methods section below.
+}
 \description{
 Implements the family of divergence-based classifiers of Ferreira, Coelho
 and Nascimento (2021). Each pixel is represented by the model fitted to

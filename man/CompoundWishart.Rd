@@ -3,6 +3,10 @@
 \name{CompoundWishart}
 \alias{CompoundWishart}
 \title{Compound complex Wishart models (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{CompoundWishart$new()} returns a new \code{CompoundWishart}
+object; its methods are described in the Methods section below.
+}
 \description{
 R6 class for the compound truncated Poisson (CTPCW) and compound
 geometric (CGCW) complex Wishart laws of Ferreira, Nascimento and Frery

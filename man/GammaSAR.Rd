@@ -3,6 +3,10 @@
 \name{GammaSAR}
 \alias{GammaSAR}
 \title{Gamma model for SAR intensities (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{GammaSAR$new()} returns a new \code{GammaSAR}
+object; its methods are described in the Methods section below.
+}
 \description{
 R6 class for the multilook Gamma law \eqn{\Gamma(\mu, L)}; see
 \code{\link[=dgammasar]{dgammasar()}}. The maximum likelihood estimator of \eqn{\mu} is the

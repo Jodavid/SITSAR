@@ -3,6 +3,10 @@
 \name{G0I}
 \alias{G0I}
 \title{G0I model for SAR intensities (R6)}
+\value{
+An \link[R6:R6Class]{R6::R6Class} generator. \code{G0I$new()} returns a new \code{G0I}
+object; its methods are described in the Methods section below.
+}
 \description{
 R6 class for the \eqn{\mathcal{G}_I^0(\alpha, \gamma, L)} law (see
 \code{\link[=dg0i]{dg0i()}}) with maximum likelihood estimation (analytic score, quasi-Newton

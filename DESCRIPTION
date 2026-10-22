@@ -12,13 +12,13 @@ Description: Statistical models, information-theoretic measures and image
     (PolSAR) data. It implements intensity models (Gamma, generalized Gamma
     and G0I) and matrix models (scaled complex Wishart, G0 polarimetric and
     the compound truncated Poisson and compound geometric complex Wishart
-    laws), maximum likelihood and expectation-maximisation estimation,
+    laws), maximum likelihood and expectation-maximization estimation,
     closed-form Shannon entropies with their asymptotic variances,
     entropy-based hypothesis tests and change detection, entropy-based
-    image segmentation by (stochastic) expectation-maximisation, stochastic
+    image segmentation by (stochastic) expectation-maximization, stochastic
     distances and a family of divergence-based classifiers (Kullback-Leibler,
     Jeffreys, Bhattacharyya and Renyi) for Gaussian vector features and
-    complex Wishart matrix features. The main tools are R6 classes and the
+    complex Wishart matrix features. The main tools are 'R6' classes and the
     classifiers are available as a 'parsnip' model, so they can be used
     inside 'tidymodels' workflows. Methods are described in Ferreira,
     Coelho and Nascimento (2021) <doi:10.1080/01431161.2020.1826060>,

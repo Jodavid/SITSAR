@@ -17,6 +17,8 @@
 #' @field loglik Maximised log-likelihood (`NULL` if not fitted).
 #' @field converged Logical convergence flag of the last fit.
 #'
+#' @return An [R6::R6Class] generator. `SARModel$new()` returns a new `SARModel`
+#'   object; its methods are described in the Methods section below.
 #' @export
 SARModel <- R6::R6Class(
   "SARModel",
@@ -168,6 +170,8 @@ SARModel <- R6::R6Class(
 #' m$entropy_variance()
 #' generics::tidy(m)
 #'
+#' @return An [R6::R6Class] generator. `GammaSAR$new()` returns a new `GammaSAR`
+#'   object; its methods are described in the Methods section below.
 #' @export
 GammaSAR <- R6::R6Class(
   "GammaSAR",
@@ -248,6 +252,8 @@ GammaSAR <- R6::R6Class(
 #' m$entropy_variance()
 #' G0I$new()$fit(z)$params # L estimated
 #'
+#' @return An [R6::R6Class] generator. `G0I$new()` returns a new `G0I`
+#'   object; its methods are described in the Methods section below.
 #' @export
 G0I <- R6::R6Class(
   "G0I",
@@ -387,6 +393,8 @@ G0I <- R6::R6Class(
 #' m <- GGammaSAR$new()$fit(z)
 #' m
 #'
+#' @return An [R6::R6Class] generator. `GGammaSAR$new()` returns a new `GGammaSAR`
+#'   object; its methods are described in the Methods section below.
 #' @export
 GGammaSAR <- R6::R6Class(
   "GGammaSAR",
@@ -489,6 +497,8 @@ GGammaSAR <- R6::R6Class(
 #' m
 #' m$entropy_variance()
 #'
+#' @return An [R6::R6Class] generator. `WishartSAR$new()` returns a new `WishartSAR`
+#'   object; its methods are described in the Methods section below.
 #' @export
 WishartSAR <- R6::R6Class(
   "WishartSAR",
@@ -567,6 +577,8 @@ WishartSAR <- R6::R6Class(
 #' m
 #' m$entropy_variance()
 #'
+#' @return An [R6::R6Class] generator. `G0Polarimetric$new()` returns a new `G0Polarimetric`
+#'   object; its methods are described in the Methods section below.
 #' @export
 G0Polarimetric <- R6::R6Class(
   "G0Polarimetric",
@@ -721,6 +733,8 @@ G0Polarimetric <- R6::R6Class(
 #' m$params$lambda
 #' m$iterations
 #'
+#' @return An [R6::R6Class] generator. `CompoundWishart$new()` returns a new `CompoundWishart`
+#'   object; its methods are described in the Methods section below.
 #' @export
 CompoundWishart <- R6::R6Class(
   "CompoundWishart",

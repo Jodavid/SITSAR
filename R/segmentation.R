@@ -43,6 +43,8 @@
 #' plot_map(seg$label_map(), main = "Entropy-based segmentation")
 #' kappa_statistics(SanFrancisco150_gt, seg$label_map())
 #'
+#' @return An [R6::R6Class] generator. `EntropySegmenter$new()` returns a new `EntropySegmenter`
+#'   object; its methods are described in the Methods section below.
 #' @export
 EntropySegmenter <- R6::R6Class(
   "EntropySegmenter",

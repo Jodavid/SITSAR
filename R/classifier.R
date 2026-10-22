@@ -52,6 +52,8 @@
 #' mean(pred == feats$class)
 #' head(clf$predict(feats, type = "distance"))
 #'
+#' @return An [R6::R6Class] generator. `DivergenceClassifier$new()` returns a new `DivergenceClassifier`
+#'   object; its methods are described in the Methods section below.
 #' @export
 DivergenceClassifier <- R6::R6Class(
   "DivergenceClassifier",
