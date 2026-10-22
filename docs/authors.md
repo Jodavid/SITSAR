@@ -17,10 +17,13 @@ Ferreira, J. and Nascimento, A. (2026). SITSAR: Information Theory,
 Geometry and Statistics for Synthetic Aperture Radar Data. R package
 version 1.0.0. https://github.com/jodavid/SITSAR
 
-    @Manual{,
-      title = {{% raw %}{{SITSAR}}{% endraw %}: Information Theory, Geometry and Statistics for Synthetic Aperture Radar Data},
-      author = {Jodavid Ferreira and Abraao Nascimento},
-      year = {2026},
-      note = {R package version 1.0.0},
-      url = {https://github.com/jodavid/SITSAR},
-    }
+{% raw %}
+@Manual{SITSAR,
+  title = {{SITSAR}: Information Theory, Geometry and Statistics for Synthetic Aperture Radar Data},
+  author = {Jodavid Ferreira and Abraao Nascimento},
+  year = {2026},
+  note = {R package version 1.0.0},
+  url = {https://github.com/jodavid/SITSAR},
+}
+{% endraw %}
+
