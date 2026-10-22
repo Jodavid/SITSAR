@@ -1,0 +1,384 @@
+# SITSAR
+
+## Information Theory, Geometry and Statistics for Synthetic Aperture Radar Data
+
+**SITSAR** brings together statistical models, information-theoretic
+measures and image-analysis tools for **Synthetic Aperture Radar (SAR)**
+and **polarimetric SAR (PolSAR)** data. It gathers the methods developed
+in the master’s dissertation (*divergence-based classifiers*) and in the
+PhD thesis (*Shannon entropies, entropy-based segmentation and change
+detection, and compound Wishart models*) of Jodavid A. Ferreira,
+supervised by Abraão D. C. Nascimento (UFPE, Brazil).
+
+The main tools are **R6 classes**, and the classifiers are available as
+a **[parsnip](https://parsnip.tidymodels.org/) model**, so they work
+inside **[tidymodels](https://www.tidymodels.org/)** workflows (recipes,
+resampling, tuning and yardstick metrics).
+
+| Topic | Tools |
+|:---|:---|
+| Intensity models | [`dg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md)/[`pg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md)/[`qg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md)/[`rg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md), `*gammasar()`, `*ggamma()` |
+| Matrix (PolSAR) models | [`dwishart_sar()`](https://jodavid.github.io/SITSAR/reference/dwishart_sar.md), [`dg0p()`](https://jodavid.github.io/SITSAR/reference/dg0p.md), [`dctpcw()`](https://jodavid.github.io/SITSAR/reference/compound_wishart.md), [`dcgcw()`](https://jodavid.github.io/SITSAR/reference/compound_wishart.md) and generators |
+| R6 models (ML/EM estimation, entropy, variance) | `GammaSAR`, `G0I`, `GGammaSAR`, `WishartSAR`, `G0Polarimetric`, `CompoundWishart` |
+| Shannon entropies | [`entropy_gamma()`](https://jodavid.github.io/SITSAR/reference/entropy.md), [`entropy_g0i()`](https://jodavid.github.io/SITSAR/reference/entropy.md), [`entropy_ggamma()`](https://jodavid.github.io/SITSAR/reference/entropy.md), [`entropy_wishart()`](https://jodavid.github.io/SITSAR/reference/entropy.md), [`entropy_g0p()`](https://jodavid.github.io/SITSAR/reference/entropy.md) |
+| Images | `SARImage`, [`sar_features()`](https://jodavid.github.io/SITSAR/reference/sar_features.md), [`entropy_map()`](https://jodavid.github.io/SITSAR/reference/entropy_map.md), [`plot_map()`](https://jodavid.github.io/SITSAR/reference/plot_map.md) |
+| Segmentation | `EntropySegmenter` (EM / SEM), [`segment_sar()`](https://jodavid.github.io/SITSAR/reference/segment_sar.md) |
+| Hypothesis tests and change detection | [`entropy_test()`](https://jodavid.github.io/SITSAR/reference/entropy_test.md), [`change_map()`](https://jodavid.github.io/SITSAR/reference/change_map.md), [`change_detection_metrics()`](https://jodavid.github.io/SITSAR/reference/change_detection_metrics.md) |
+| Divergences and classification | [`divergence_gaussian()`](https://jodavid.github.io/SITSAR/reference/divergences.md), [`divergence_wishart()`](https://jodavid.github.io/SITSAR/reference/divergences.md), [`distancesg0i()`](https://jodavid.github.io/SITSAR/reference/distancesg0i.md), `DivergenceClassifier`, [`divergence_classifier()`](https://jodavid.github.io/SITSAR/reference/divergence_classifier.md) |
+| Accuracy | [`kappa_statistics()`](https://jodavid.github.io/SITSAR/reference/kappa_statistics.md) |
+
+## Installation
+
+``` r
+
+# From CRAN
+install.packages("SITSAR")
+
+# Development version from GitHub
+# install.packages("remotes")
+remotes::install_github("jodavid/SITSAR")
+```
+
+## A PolSAR image
+
+The package ships a 150 x 150 crop of the L-band AIRSAR image of San
+Francisco (`SanFrancisco150`) and its ground truth
+(`SanFrancisco150_gt`).
+
+``` r
+
+library(SITSAR)
+
+img <- SARImage$new(SanFrancisco150, looks = 4)
+img
+#> <SARImage> 150 x 150 PolSAR (3 x 3 covariance)
+#>   channels: HH, HV, VV
+#>   looks: 4
+#>   mean HH  = 0.1735
+#>   mean HV  = 0.04224
+#>   mean VV  = 0.147
+
+op <- par(mfrow = c(1, 2))
+img$plot()
+plot_map(SanFrancisco150_gt, main = "Ground truth",
+         palette = c("#1f78b4", "#33a02c", "#e31a1c"))
+```
+
+![](reference/figures/README-image-1.png)
+
+``` r
+
+par(op)
+```
+
+## Models, estimation and Shannon entropy
+
+``` r
+
+set.seed(1)
+x <- rg0i(1000, alpha = -3, gamma = 2, L = 4)
+
+fit <- G0I$new()$fit(x)        # maximum likelihood (alpha, gamma and L)
+fit
+#> <G0I> fitted to n = 1000 observations
+#>   alpha = -3.95788
+#>   gamma = 2.80374
+#>   L = 3.00607
+#>   logLik = -835.636
+#>   Shannon entropy = 0.835636
+fit$entropy_variance()         # asymptotic variance of the entropy estimator
+#> [1] 0.001158187
+generics::tidy(fit)
+#> # A tibble: 3 × 4
+#>   term  estimate std.error fixed
+#>   <chr>    <dbl>     <dbl> <lgl>
+#> 1 alpha    -3.96     0.531 FALSE
+#> 2 gamma     2.80     0.469 FALSE
+#> 3 L         3.01     0.311 FALSE
+
+# Polarimetric models
+Sigma <- polsar_example_sigma("forest")
+Z <- rg0p(500, alpha = -4, Sigma = Sigma, L = 4)
+G0Polarimetric$new()$fit(Z, L = 4)$params$alpha
+#> [1] -4.028688
+```
+
+## Entropy maps and unsupervised segmentation
+
+``` r
+
+H <- entropy_map(img, model = "wishart", window = 7, L = 4)
+
+set.seed(2)
+seg <- EntropySegmenter$new(k = 3, method = "em")$fit(H)
+
+op <- par(mfrow = c(1, 2))
+plot_map(H, main = "Wishart entropy map")
+plot_map(seg$label_map(), main = "Entropy-based segmentation",
+         palette = c("#1f78b4", "#33a02c", "#e31a1c"))
+```
+
+![](reference/figures/README-segmentation-1.png)
+
+``` r
+
+par(op)
+
+kappa_statistics(SanFrancisco150_gt, seg$label_map(), match = TRUE)
+#> # A tibble: 1 × 5
+#>   kappa   variance std_error overall_accuracy     n
+#>   <dbl>      <dbl>     <dbl>            <dbl> <dbl>
+#> 1 0.914 0.00000566   0.00238            0.945 22500
+```
+
+## Divergence-based classification with tidymodels
+
+``` r
+
+library(parsnip)
+library(workflows)
+library(recipes)
+library(yardstick)
+
+feats <- sar_features(img, window = 5)
+feats$class <- factor(as.vector(SanFrancisco150_gt),
+                      labels = c("ocean", "vegetation", "urban"))
+set.seed(3)
+train <- feats[sample(nrow(feats), 450), ]
+
+spec <- divergence_classifier(divergence = "renyi", order = 0.9) |>
+  set_engine("wishart")
+
+rec <- recipe(class ~ ., data = train) |>
+  update_role(row, col, new_role = "id")
+
+wf_fit <- workflow(rec, spec) |> fit(data = train)
+
+pred <- augment(wf_fit, feats)
+accuracy(pred, truth = class, estimate = .pred_class)
+#> # A tibble: 1 × 3
+#>   .metric  .estimator .estimate
+#>   <chr>    <chr>          <dbl>
+#> 1 accuracy multiclass     0.952
+```
+
+## Entropy-based change detection
+
+``` r
+
+set.seed(4)
+before <- matrix(rgammasar(60 * 60, mu = 1, L = 4), 60)
+after <- before
+after[21:40, 21:45] <- rgammasar(500, mu = 3, L = 4)
+
+cd <- change_map(before, after, model = "gamma", window = 5, L = 4)
+cd
+#> <Entropy-based change map> model: gamma | level: 0.01 
+#>   size: 60 x 60 
+#>   changed pixels: 611 (16.97%)
+plot_map(cd$change, main = "Detected changes")
+```
+
+![](reference/figures/README-change-1.png)
+
+## Learn more
+
+- [`vignette("SITSAR")`](https://jodavid.github.io/SITSAR/articles/SITSAR.md)
+  — getting started;
+- [`vignette("tidymodels", package = "SITSAR")`](https://jodavid.github.io/SITSAR/articles/tidymodels.md)
+  — divergence-based classifiers with tidymodels;
+- the package website: <https://jodavid.github.io/SITSAR/>.
+
+## References
+
+- Ferreira, J. A., Coêlho, H. and Nascimento, A. D. C. (2021). A family
+  of divergence-based classifiers for Polarimetric Synthetic Aperture
+  Radar (PolSAR) imagery vector and matrix features. *International
+  Journal of Remote Sensing*, 42(4), 1201–1229.
+  [doi:10.1080/01431161.2020.1826060](https://doi.org/10.1080/01431161.2020.1826060)
+- Ferreira, J. A. and Nascimento, A. D. C. (2020). Shannon entropy for
+  the G_(I)⁰ model: a new segmentation approach. *IEEE JSTARS*, 13,
+  2547–2553.
+  [doi:10.1109/JSTARS.2020.2997666](https://doi.org/10.1109/JSTARS.2020.2997666)
+- Ferreira, J. A., Nascimento, A. D. C. and Frery, A. C. (2022). PolSAR
+  models with multimodal intensities. *Remote Sensing*, 14(20), 5083.
+  [doi:10.3390/rs14205083](https://doi.org/10.3390/rs14205083)
+- Nascimento, A. D. C., Ferreira, J. A. and Frery, A. C. (2023).
+  Unsupervised segmentation of PolSAR data with complex Wishart and G0m
+  distributions and Shannon entropy. *Statistics and Computing*,
+  33, 129.
+  [doi:10.1007/s11222-023-10298-0](https://doi.org/10.1007/s11222-023-10298-0)
+- Ferreira, J. A. (2017). *Classificadores induzidos de divergências
+  para modelos vetoriais e para distribuição Wishart complexa:
+  experimentos em imagens PolSAR*. Master’s dissertation, UFPE.
+- Ferreira, J. A. (2021). *Entropias e somas compostas para matrizes
+  estocásticas aplicadas a sistemas PolSAR*. PhD thesis, UFPE.
+
+## Citation
+
+``` r
+
+citation("SITSAR")
+```
+
+## Authors
+
+- **Jodavid Ferreira** (author, maintainer) — [ORCID
+  0000-0002-2131-6464](https://orcid.org/0000-0002-2131-6464)
+- **Abraão Nascimento** (author) — [ORCID
+  0000-0003-2673-219X](https://orcid.org/0000-0003-2673-219X)
+
+# Package index
+
+## Package overview
+
+- [`SITSAR`](https://jodavid.github.io/SITSAR/reference/SITSAR-package.md)
+  [`SITSAR-package`](https://jodavid.github.io/SITSAR/reference/SITSAR-package.md)
+  : SITSAR: Information Theory, Geometry and Statistics for SAR Data
+
+## Intensity distributions
+
+Univariate models for SAR intensities.
+
+- [`dg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md)
+  [`pg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md)
+  [`qg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md)
+  [`rg0i()`](https://jodavid.github.io/SITSAR/reference/dg0i.md) : The
+  G0I distribution for SAR intensities
+- [`dgammasar()`](https://jodavid.github.io/SITSAR/reference/dgammasar.md)
+  [`pgammasar()`](https://jodavid.github.io/SITSAR/reference/dgammasar.md)
+  [`qgammasar()`](https://jodavid.github.io/SITSAR/reference/dgammasar.md)
+  [`rgammasar()`](https://jodavid.github.io/SITSAR/reference/dgammasar.md)
+  : The Gamma distribution for SAR intensities
+- [`dggamma()`](https://jodavid.github.io/SITSAR/reference/dggamma.md)
+  [`pggamma()`](https://jodavid.github.io/SITSAR/reference/dggamma.md)
+  [`qggamma()`](https://jodavid.github.io/SITSAR/reference/dggamma.md)
+  [`rggamma()`](https://jodavid.github.io/SITSAR/reference/dggamma.md) :
+  The generalized Gamma distribution for SAR intensities
+
+## Matrix (PolSAR) distributions
+
+Models for Hermitian positive definite PolSAR matrices.
+
+- [`dwishart_sar()`](https://jodavid.github.io/SITSAR/reference/dwishart_sar.md)
+  [`rwishart_sar()`](https://jodavid.github.io/SITSAR/reference/dwishart_sar.md)
+  : The scaled complex Wishart distribution
+- [`dg0p()`](https://jodavid.github.io/SITSAR/reference/dg0p.md)
+  [`rg0p()`](https://jodavid.github.io/SITSAR/reference/dg0p.md) : The
+  G0 polarimetric distribution
+- [`dctpcw()`](https://jodavid.github.io/SITSAR/reference/compound_wishart.md)
+  [`rctpcw()`](https://jodavid.github.io/SITSAR/reference/compound_wishart.md)
+  [`dcgcw()`](https://jodavid.github.io/SITSAR/reference/compound_wishart.md)
+  [`rcgcw()`](https://jodavid.github.io/SITSAR/reference/compound_wishart.md)
+  : Compound complex Wishart distributions
+- [`as_polsar_array()`](https://jodavid.github.io/SITSAR/reference/polsar-format.md)
+  [`as_polsar_vec()`](https://jodavid.github.io/SITSAR/reference/polsar-format.md)
+  : Convert between PolSAR storage formats
+- [`polsar_example_sigma()`](https://jodavid.github.io/SITSAR/reference/polsar_example_sigma.md)
+  : Example PolSAR covariance matrices
+
+## R6 statistical models
+
+Estimation, Shannon entropy and asymptotic variances.
+
+- [`SARModel`](https://jodavid.github.io/SITSAR/reference/SARModel.md) :
+  Base R6 class for SAR and PolSAR statistical models
+- [`GammaSAR`](https://jodavid.github.io/SITSAR/reference/GammaSAR.md) :
+  Gamma model for SAR intensities (R6)
+- [`G0I`](https://jodavid.github.io/SITSAR/reference/G0I.md) : G0I model
+  for SAR intensities (R6)
+- [`GGammaSAR`](https://jodavid.github.io/SITSAR/reference/GGammaSAR.md)
+  : Generalized Gamma model for SAR intensities (R6)
+- [`WishartSAR`](https://jodavid.github.io/SITSAR/reference/WishartSAR.md)
+  : Scaled complex Wishart model for PolSAR data (R6)
+- [`G0Polarimetric`](https://jodavid.github.io/SITSAR/reference/G0Polarimetric.md)
+  : G0 polarimetric model for PolSAR data (R6)
+- [`CompoundWishart`](https://jodavid.github.io/SITSAR/reference/CompoundWishart.md)
+  : Compound complex Wishart models (R6)
+- [`tidy(`*`<SARModel>`*`)`](https://jodavid.github.io/SITSAR/reference/sarmodel-methods.md)
+  [`glance(`*`<SARModel>`*`)`](https://jodavid.github.io/SITSAR/reference/sarmodel-methods.md)
+  [`logLik(`*`<SARModel>`*`)`](https://jodavid.github.io/SITSAR/reference/sarmodel-methods.md)
+  : Tidy and glance methods for SITSAR models
+- [`g0iestimation()`](https://jodavid.github.io/SITSAR/reference/g0iestimation.md)
+  : Estimation of G0I parameters
+
+## Shannon entropy
+
+- [`entropy_gamma()`](https://jodavid.github.io/SITSAR/reference/entropy.md)
+  [`entropy_g0i()`](https://jodavid.github.io/SITSAR/reference/entropy.md)
+  [`entropy_ggamma()`](https://jodavid.github.io/SITSAR/reference/entropy.md)
+  [`entropy_wishart()`](https://jodavid.github.io/SITSAR/reference/entropy.md)
+  [`entropy_g0p()`](https://jodavid.github.io/SITSAR/reference/entropy.md)
+  : Shannon entropies of SAR and PolSAR models
+- [`entropy_map()`](https://jodavid.github.io/SITSAR/reference/entropy_map.md)
+  : Shannon entropy maps
+- [`entropy_test()`](https://jodavid.github.io/SITSAR/reference/entropy_test.md)
+  : Entropy-based test for two SAR samples
+
+## Images
+
+- [`SARImage`](https://jodavid.github.io/SITSAR/reference/SARImage.md) :
+  SAR and PolSAR images (R6)
+- [`sar_features()`](https://jodavid.github.io/SITSAR/reference/sar_features.md)
+  : Local features of SAR images for pixel classification
+- [`plot_map()`](https://jodavid.github.io/SITSAR/reference/plot_map.md)
+  : Plot a map
+
+## Segmentation and change detection
+
+- [`EntropySegmenter`](https://jodavid.github.io/SITSAR/reference/EntropySegmenter.md)
+  : Entropy-based segmentation by (stochastic) EM (R6)
+- [`segment_sar()`](https://jodavid.github.io/SITSAR/reference/segment_sar.md)
+  : Entropy-based segmentation of a SAR/PolSAR image
+- [`change_map()`](https://jodavid.github.io/SITSAR/reference/change_map.md)
+  : Entropy-based change detection between two images
+
+## Divergences and classification
+
+- [`divergence_gaussian()`](https://jodavid.github.io/SITSAR/reference/divergences.md)
+  [`divergence_wishart()`](https://jodavid.github.io/SITSAR/reference/divergences.md)
+  : Divergences between Gaussian and complex Wishart models
+- [`distancesg0i()`](https://jodavid.github.io/SITSAR/reference/distancesg0i.md)
+  : Stochastic distances between G0I distributions
+- [`distancesg0itable()`](https://jodavid.github.io/SITSAR/reference/distancesg0itable.md)
+  : Table of G0I stochastic distances between two image regions
+- [`DivergenceClassifier`](https://jodavid.github.io/SITSAR/reference/DivergenceClassifier.md)
+  : Divergence-based classifier for SAR/PolSAR features (R6)
+- [`divergence_classifier()`](https://jodavid.github.io/SITSAR/reference/divergence_classifier.md)
+  [`update(`*`<divergence_classifier>`*`)`](https://jodavid.github.io/SITSAR/reference/divergence_classifier.md)
+  : Divergence-based classifier as a 'parsnip' model
+- [`renyi_order()`](https://jodavid.github.io/SITSAR/reference/renyi_order.md)
+  [`divergence_type()`](https://jodavid.github.io/SITSAR/reference/renyi_order.md)
+  [`renyi_kind()`](https://jodavid.github.io/SITSAR/reference/renyi_order.md)
+  : Tuning parameters for the divergence classifier
+
+## Accuracy assessment
+
+- [`kappa_statistics()`](https://jodavid.github.io/SITSAR/reference/kappa_statistics.md)
+  : Kappa coefficient and overall accuracy
+- [`change_detection_metrics()`](https://jodavid.github.io/SITSAR/reference/change_detection_metrics.md)
+  : Accuracy measures for change detection
+
+## Datasets
+
+- [`SanFrancisco150`](https://jodavid.github.io/SITSAR/reference/SanFrancisco150.md)
+  : San Francisco PolSAR image (150 x 150 pixels)
+- [`SanFrancisco150_gt`](https://jodavid.github.io/SITSAR/reference/SanFrancisco150_gt.md)
+  : Ground truth of the San Francisco image
+
+## Re-exported functions
+
+- [`reexports`](https://jodavid.github.io/SITSAR/reference/reexports.md)
+  [`as_tibble`](https://jodavid.github.io/SITSAR/reference/reexports.md)
+  [`tidy`](https://jodavid.github.io/SITSAR/reference/reexports.md)
+  [`glance`](https://jodavid.github.io/SITSAR/reference/reexports.md) :
+  Objects exported from other packages
+
+# Articles
+
+### Articles
+
+- [Getting started with
+  SITSAR](https://jodavid.github.io/SITSAR/articles/SITSAR.md):
+- [Divergence-based classification with
+  tidymodels](https://jodavid.github.io/SITSAR/articles/tidymodels.md):

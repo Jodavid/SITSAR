@@ -1,0 +1,101 @@
+url: https://jodavid.github.io/SITSAR/
+destination: docs
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#0E7490"
+    navbar-bg: "#0E2242"
+    link-color: "#0E7490"
+    code-color: "#7C3AED"
+
+home:
+  title: "SITSAR: Information Theory, Geometry and Statistics for SAR Data"
+  sidebar:
+    structure: [links, license, citation, authors, dev]
+
+navbar:
+  bg: dark
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/jodavid/SITSAR
+      aria-label: GitHub
+
+articles:
+  - title: Articles
+    navbar: ~
+    contents:
+      - SITSAR
+      - tidymodels
+
+reference:
+  - title: Package overview
+    contents:
+      - SITSAR-package
+  - title: Intensity distributions
+    desc: Univariate models for SAR intensities.
+    contents:
+      - dg0i
+      - dgammasar
+      - dggamma
+  - title: Matrix (PolSAR) distributions
+    desc: Models for Hermitian positive definite PolSAR matrices.
+    contents:
+      - dwishart_sar
+      - dg0p
+      - compound_wishart
+      - polsar-format
+      - polsar_example_sigma
+  - title: R6 statistical models
+    desc: Estimation, Shannon entropy and asymptotic variances.
+    contents:
+      - SARModel
+      - GammaSAR
+      - G0I
+      - GGammaSAR
+      - WishartSAR
+      - G0Polarimetric
+      - CompoundWishart
+      - sarmodel-methods
+      - g0iestimation
+  - title: Shannon entropy
+    contents:
+      - entropy
+      - entropy_map
+      - entropy_test
+  - title: Images
+    contents:
+      - SARImage
+      - sar_features
+      - plot_map
+  - title: Segmentation and change detection
+    contents:
+      - EntropySegmenter
+      - segment_sar
+      - change_map
+  - title: Divergences and classification
+    contents:
+      - divergences
+      - distancesg0i
+      - distancesg0itable
+      - DivergenceClassifier
+      - divergence_classifier
+      - renyi_order
+  - title: Accuracy assessment
+    contents:
+      - kappa_statistics
+      - change_detection_metrics
+  - title: Datasets
+    contents:
+      - SanFrancisco150
+      - SanFrancisco150_gt
+  - title: Re-exported functions
+    contents:
+      - reexports
+  - title: internal
+    contents:
+      - sitsar_divergence_fit
